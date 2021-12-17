@@ -51,7 +51,7 @@ TiDB 处理各种灾难故障可谓轻车熟路，但是常言道“天灾易躲
 
 ### 3. Subsecond Flashback
 
-- 添加 `flashback table begin_ts [, end_ts]` SQL 语句，用于指定 table 进行数据还原。意义是还原指定时间范围内的写入，如果不指定 end_ts，则使用当前最新版本。
+- 添加 `flashback table ts` SQL 语句，用于指定 table 进行数据还原。意义是将表还原至不超过 ts 时间戳指定的版本。
 - 将时间范围写入 table schema 并触发 DDL 操作，DDL 同步完成即可返回操作成功。
 - TiDB 请求 TiKV 时，需要将要忽略的 ts 区间放在请求中发给 TiKV。
 - 修改 MVCC 读取逻辑，要根据指定的区间跳过对应的版本。（这里有个小问题，MVCC Query in SQL 要不要跳过区间？或者我们可以加个新的虚拟列标识出来？）
@@ -66,3 +66,4 @@ TiDB 处理各种灾难故障可谓轻车熟路，但是常言道“天灾易躲
 
 - 把 GC lifetime 配置，和 GC savepoint 配置都改成表级的，这样可以更好地管理不同表的备份的需求。
 - GC 的时候要根据数据所属的表进行特殊处理。
+- 可以基于 Region Label 进行配置。
